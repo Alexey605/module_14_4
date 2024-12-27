@@ -1,0 +1,26 @@
+import sqlite3
+connection = sqlite3.connect("Products.db" )
+cursor = connection.cursor()
+
+def initiate_db():
+    cursor.execute("""CREATE TABLE IF NOT EXISTS Products
+    (
+    id INTEGER PRIMARY KEY,
+    title TEXT NOT NULL,
+    description TEXT,
+    price INTEGER NOT NULL,
+    img BLOB
+    )
+    """)
+    connection.commit()
+
+def get_all_products():
+    cursor.execute("SELECT * from Products")
+    return cursor.fetchall()
+
+def create_items_for_db():
+    for i in range(1,5):
+        with open(f'files/{i}.jpg', 'rb')  as img:
+            cursor.execute("INSERT INTO Products (title, description, price, img) VALUES(?, ?, ?, ?)",
+                           (f'Продукт {i}', f'| описание {i}', i * 100, img.read()))
+            connection.commit()
